@@ -1,5 +1,9 @@
 name: Continuous Integration
 
+backDirectory: &backDirectory ./back
+frontDirectory: &frontDirectory ./front
+nodeVersion: &nodeVersion 12.X
+
 on:
     push: ~
     pull_request: ~
@@ -12,11 +16,11 @@ jobs:
             -   uses: actions/checkout@v1
 
             -   name: Install dependencies
-                working-directory: ./back
+                working-directory: *backDirectory
                 run: composer install --prefer-dist --no-progress --no-suggest
 
             -   name: PHPStan
-                working-directory: ./back
+                working-directory: *backDirectory
                 run: composer phpstan
 
     back-phpcsfixer:
@@ -26,11 +30,11 @@ jobs:
             -   uses: actions/checkout@v1
 
             -   name: Install dependencies
-                working-directory: ./back
+                working-directory: *backDirectory
                 run: composer install --prefer-dist --no-progress --no-suggest
 
             -   name: PHP CS Fixer
-                working-directory: ./back
+                working-directory: *backDirectory
                 run: composer cs -- --dry-run
 
     front-lint:
@@ -41,12 +45,12 @@ jobs:
 
             -   uses: actions/setup-node@v1
                 with:
-                    node-version: 12.x
+                    node-version: *nodeVersion
 
             -   name: Install dependencies
-                working-directory: ./front
+                working-directory: *frontDirectory
                 run: yarn
 
             -   name: Lint
-                working-directory: ./front
+                working-directory: *frontDirectory
                 run: yarn lint
